@@ -93,7 +93,7 @@ function create() {
 
     layer2 = map.createLayer('Tile Layer 2');
     layer = map.createLayer('Tile Layer 1');
-    User = new ROV('ROV', 100, 200, 300);
+    User = new ROV('ROV', 100, 1120, 980);
 	layer3 = map.createLayer('Tile Layer 3');
 	layer3.alpha = 0.4;
 	layer4 = map.createLayer('Tile Layer 4');
@@ -136,17 +136,37 @@ function create() {
 
     game.camera.deadzone = new Phaser.Rectangle(300, 200, 300, 200);
     
-	ray = game.add.sprite(0, 0, 'ray');
 
-	rockb = game.add.sprite(50,50, 'rockb');
+    //ray = new Animal('ray',768, 1536);
+	ray = game.add.sprite(768, 1536, 'ray');
+	ray.animations.add('awake', [1, 2,3,4, 5], 5, true);
 
-	hardfan = game.add.sprite(100,100, 'hardfan');
+	rockb = game.add.sprite(768,512, 'rockb');
+	rockb.animations.add('awake', [1, 2], 5, true);
 
-	sponge = game.add.sprite(150,150, 'sponge');
+	hardfan = game.add.sprite(1792,1728, 'hardfan');
+	hardfan.animations.add('awake', [1,2], 5, true);
 
-	sealettuce = game.add.sprite(200,200, 'lettuce');
+	sponge = game.add.sprite(1600, 0, 'sponge');
+	sponge.animations.add('awake', [1,2], 5, true);
 
-	tgrass = game.add.sprite(250,250, 'tgrass');
+	sealettuce = game.add.sprite(1536,1152, 'lettuce');
+	sealettuce.animations.add('awake', [1,2], 5, true);
+
+	tgrass = game.add.sprite(256,1216, 'tgrass');
+	tgrass.animations.add('awake', [1,2], 5, true);
+
+
+	game.physics.arcade.enable([ray, rockb, hardfan, sponge, sealettuce, tgrass]);
+	
+	ray.body.immovable = true;
+	rockb.body.immovable = true;
+	hardfan.body.immovable = true;
+	sponge.body.immovable = true;
+	sealettuce.body.immovable = true;
+	tgrass.body.immovable = true;
+
+
 }
 
 function update() {
@@ -154,8 +174,51 @@ function update() {
     
     game.physics.arcade.collide(User.character, layer);
     
+    /*game.physics.arcade.collide(User.character,ray);
+    game.physics.arcade.collide(User.character,rockb);
+    game.physics.arcade.collide(User.character,hardfan);
+    game.physics.arcade.collide(User.character,sponge);
+    game.physics.arcade.collide(User.character,sealettuce);
+    game.physics.arcade.collide(User.character,tgrass);
+	*/
+
+    if (game.physics.arcade.overlap(User.character, ray))
+    {
+    	ray.animations.play('awake');
+    }
+
+    if (game.physics.arcade.overlap(User.character, rockb))
+    {
+    	rockb.animations.play('awake');
+    }
+
+    if (game.physics.arcade.overlap(User.character, hardfan))
+    {
+    	hardfan.animations.play('awake');
+    }
+
+    if (game.physics.arcade.overlap(User.character, sponge))
+    {
+    	sponge.animations.play('awake');
+    }
+
+    if (game.physics.arcade.overlap(User.character, sealettuce))
+    {
+    	sealettuce.animations.play('awake');
+    }
+
+    if (game.physics.arcade.overlap(User.character, tgrass))
+    {
+    	tgrass.animations.play('awake');
+    }
 
 
+//    bumpcheck(User,ray);
+
+/*if(game.physics.arcade.collide(User.character,ray)){layer3.alpha = 1;
+layer4.alpha = 1;
+layer5.alpha = 1}
+ */
 
     //waves(wavetime);
     wavetime = wavetime + 1;
@@ -234,6 +297,22 @@ function ROV(character,health,startx,starty)
     this.journal = []; //array to store what has already been catalogued
 
     }
+function Animal(character,startx,starty)
+	{
+	this.startx = startx;
+    this.starty = starty;
+    this.character = game.add.sprite(startx, starty, character);
+    this.bumped = false;
+	}
+
+function bumpcheck(ROV, Animal)
+{
+	if (game.physics.arcade.overlap(this.ROV, this.Animal))
+    {
+    	this.Animal.bumped = true;
+    }
+    return;
+}
 
 function inspect()
 {
