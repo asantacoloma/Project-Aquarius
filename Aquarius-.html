@@ -1,0 +1,275 @@
+<!doctype html> 
+<html lang="en"> 
+<head> 
+	<meta charset="UTF-8" />
+    <title>Phaser - Marston V West</title>
+     <script src="phaser.js"></script>
+    <style type="text/css">
+        body {
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+
+<script type="text/javascript">
+var game = new Phaser.Game(900, 600, Phaser.AUTO, '', { preload: preload, create: create, update: update });
+
+function preload() {
+
+    //game.load.image('wave1', 'assets/wavestest.png');
+    //game.load.image('wave2', 'assets/wavestest2.png');
+    //game.load.spritesheet('sea', 'assets/waves.png', 64, 64);
+    
+    //game.load.image('sand', 'assets/sandtest.png');
+
+    game.load.spritesheet('ROV', 'assets/ROV.png', 32, 32);
+
+	game.load.tilemap('tilemap', 'assets/tilemaps/maps/testbed4.json', null, Phaser.Tilemap.TILED_JSON);
+
+    game.load.image('tiles', 'assets/tilemaps/tiles/sand2.png');
+    
+    game.load.spritesheet('rockb', 'assets/rockbeauty.png',64,64);
+    game.load.spritesheet('hardfan', 'assets/hardfan.png',64,64);
+    game.load.spritesheet('lettuce', 'assets/sealettuce.png',64,64);
+    game.load.spritesheet('sponge', 'assets/sponge.png',64,64);
+    game.load.spritesheet('ray', 'assets/Stingray.png',64,64);
+    game.load.spritesheet('tgrass', 'assets/turtlegrass.png',64,64)
+}
+
+
+var cursors;
+
+
+var controller;
+
+var User;
+var controlpad;
+
+var wavetime;
+var sand;
+
+var map;
+var layer;
+var layer2;
+var layer3;
+var layer4;
+var layer5;
+
+
+var stingray;
+var ray;
+
+var sponge;
+var spon;
+
+var hardfan;
+var har;
+
+var lettuce;
+var lett;
+
+var rockb;
+var roc;
+
+var tgrass;
+
+function create() {
+    
+
+    game.physics.startSystem(Phaser.Physics.ARCADE);
+
+    
+
+    game.world.setBounds(0, 0, 1920, 1920);
+
+    map = game.add.tilemap('tilemap');
+
+    map.addTilesetImage('sand2','tiles');
+    //map.addTilesetImage('waves1','tiles2');
+    
+ 	//map.setCollisionBetween(23,26);
+ 	map.setCollision(23);
+
+    layer2 = map.createLayer('Tile Layer 2');
+    layer = map.createLayer('Tile Layer 1');
+    User = new ROV('ROV', 100, 200, 300);
+	layer3 = map.createLayer('Tile Layer 3');
+	layer3.alpha = 0.4;
+	layer4 = map.createLayer('Tile Layer 4');
+	layer4.alpha = 0;
+    layer5 = map.createLayer('Tile Layer 5');
+    layer5.alpha = 0;
+
+    
+    //layer.resizeWorld();
+    wavetime = 0;
+   
+    User.character.anchor.setTo(0.5);
+    //User.character.alpha = 0.85;
+    //  We need to enable physics on the player
+    game.physics.arcade.enable(User.character);
+
+
+    //  Player physics properties. Give ROV slight bounce.
+    User.character.body.bounce.y = 0.4;
+
+    User.character.body.drag.set(70);
+    User.character.body.maxVelocity.set(200);
+
+    //User.character.body.gravity.y = 400;
+    User.character.body.collideWorldBounds = true;
+
+    //idle animation for ROV
+    User.character.animations.add('alert', [2,3], 5, true);
+    User.character.animations.add('go', [0, 1], 10, true);
+
+    User.character.scale.x = 2;
+    User.character.scale.y = 2;
+
+
+    controlpad = new Object();
+    controlpad = game.input.keyboard.addKeys({ 'up': Phaser.KeyCode.W, 'down': Phaser.KeyCode.S, 'left': Phaser.KeyCode.A, 'right': Phaser.KeyCode.D , 'inspect': Phaser.KeyCode.I});
+
+
+    game.camera.follow(User.character);
+
+    game.camera.deadzone = new Phaser.Rectangle(300, 200, 300, 200);
+    
+	ray = game.add.sprite(0, 0, 'ray');
+
+	rockb = game.add.sprite(50,50, 'rockb');
+
+	hardfan = game.add.sprite(100,100, 'hardfan');
+
+	sponge = game.add.sprite(150,150, 'sponge');
+
+	sealettuce = game.add.sprite(200,200, 'lettuce');
+
+	tgrass = game.add.sprite(250,250, 'tgrass');
+}
+
+function update() {
+
+    
+    game.physics.arcade.collide(User.character, layer);
+    
+
+
+
+    //waves(wavetime);
+    wavetime = wavetime + 1;
+
+if (wavetime == 60)
+{
+
+layer3.alpha = 0;
+layer4.alpha = 0.4;
+layer5.alpha = 0;
+
+}
+else if (wavetime == 120)
+{
+	layer3.alpha = 0;
+	layer4.alpha = 0;
+	layer5.alpha = 0.4;
+}
+
+else if (wavetime == 180)
+{
+	layer3.alpha = 0.4;
+	layer4.alpha = 0;
+	layer5.alpha = 0;
+	wavetime = 0;
+}
+
+    if (controlpad.up.isDown)
+    {
+        //Propel ROV forward
+        game.physics.arcade.accelerationFromRotation(User.character.rotation, 250, User.character.body.acceleration);
+        User.character.animations.play('go');
+        
+    }
+    else
+    {
+        User.character.body.acceleration.set(0);
+        
+    }
+    
+    if (controlpad.left.isDown)
+    {
+        //Rotate ROV left
+         User.character.body.angularVelocity = -80;
+        User.character.animations.play('go');
+    }
+    else if (controlpad.right.isDown)
+    {
+        //Rotate ROV right
+        User.character.body.angularVelocity = 80;
+        User.character.animations.play('go');
+    }
+    
+    else if (controlpad.inspect.isDown)
+    {
+       //call on inspect function
+       User.character.animations.play('alert');
+    }        
+    else
+    {
+        User.character.body.angularVelocity = 0;
+    }
+
+
+}
+
+//fighter class
+function ROV(character,health,startx,starty) 
+    {
+
+    this.health = 100;//player start health
+    this.log = 0; //number of plants and animals catalogued
+    this.startx = startx;
+    this.starty = starty;
+    this.character = game.add.sprite(startx, starty, character);//player character variable to access sprite from phaser and all its properties character variable is name of spritesheet to use
+    this.journal = []; //array to store what has already been catalogued
+
+    }
+
+function inspect()
+{
+
+}
+
+function waves(wavetime)
+{
+wavetime = wavetime + 1;
+
+if (wavetime == 60)
+{
+
+layer3.alpha = 0;
+layer4.alpha = 0.5;
+layer5.alpha = 0;
+
+}
+else if (wavetime == 120)
+{
+	layer3.alpha = 0;
+	layer4.alpha = 0;
+	layer5.alpha = 0.5;
+}
+
+else if (wavetime == 180)
+{
+	layer3.alpha = 0.5;
+	layer4.alpha = 0;
+	layer5.alpha = 0;
+}
+
+}
+
+
+</script>
+
+</body>
+</html>
