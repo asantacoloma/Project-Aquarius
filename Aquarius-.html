@@ -13,7 +13,7 @@
 <body>
 
 <script type="text/javascript">
-var game = new Phaser.Game(900, 600, Phaser.AUTO, '', { preload: preload, create: create, update: update });
+var game = new Phaser.Game(1000, 800, Phaser.AUTO, '', { preload: preload, create: create, update: update });
 
 function preload() {
 
@@ -23,18 +23,28 @@ function preload() {
     
     //game.load.image('sand', 'assets/sandtest.png');
 
+
     game.load.spritesheet('ROV', 'assets/ROV.png', 32, 32);
 
 	game.load.tilemap('tilemap', 'assets/tilemaps/maps/testbed4.json', null, Phaser.Tilemap.TILED_JSON);
 
     game.load.image('tiles', 'assets/tilemaps/tiles/sand2.png');
     
+
+    //spritesheets for plants and animals ROV can interact with
     game.load.spritesheet('rockb', 'assets/rockbeauty.png',64,64);
     game.load.spritesheet('hardfan', 'assets/hardfan.png',64,64);
     game.load.spritesheet('lettuce', 'assets/sealettuce.png',64,64);
     game.load.spritesheet('sponge', 'assets/sponge.png',64,64);
     game.load.spritesheet('ray', 'assets/Stingray.png',64,64);
     game.load.spritesheet('tgrass', 'assets/turtlegrass.png',64,64)
+
+
+    //Preload of note cards for plants and animalsd
+    game.load.image('raycard', 'assets/sr2.png');
+    game.load.image('rbcard', 'assets/rb.png');
+    game.load.image('tgcard', 'assets/tg.png');
+
 }
 
 
@@ -73,6 +83,8 @@ var rockb;
 var roc;
 
 var tgrass;
+
+var raycard;
 
 function create() {
     
@@ -124,8 +136,8 @@ function create() {
     User.character.animations.add('alert', [2,3], 5, true);
     User.character.animations.add('go', [0, 1], 10, true);
 
-    User.character.scale.x = 2;
-    User.character.scale.y = 2;
+    User.character.scale.x = 2.5;
+    User.character.scale.y = 2.5;
 
 
     controlpad = new Object();
@@ -185,12 +197,16 @@ function update() {
     if (game.physics.arcade.overlap(User.character, ray))
     {
     	ray.animations.play('awake');
+    	raycard = game.add.image(830, 1500, 'raycard');
     }
 
     if (game.physics.arcade.overlap(User.character, rockb))
     {
     	rockb.animations.play('awake');
+    	raycard = game.add.image(780, 580, 'rbcard');
+    	raycard.destroy;
     }
+    
 
     if (game.physics.arcade.overlap(User.character, hardfan))
     {
